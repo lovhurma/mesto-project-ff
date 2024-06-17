@@ -1,6 +1,4 @@
 // @todo: Темплейт карточки
-
-const cardContainer = document.querySelector('.places__item')
 const cardTemplate = document.querySelector('#card-template').content
 
 // @todo: DOM узлы
@@ -17,6 +15,7 @@ const deleteCard = placeTemplate.querySelector('.card__delete-button')
 
 cardImage.src = element.link;
 cardTitle.textContent = element.name;
+cardImage.alt = `Изображение ${element.name}`
 
 deleteCard.addEventListener('click', cardDelete) 
 
