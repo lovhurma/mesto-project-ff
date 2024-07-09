@@ -1,9 +1,8 @@
 import '../pages/index.css';
+import { initialCards } from './cards.js'
 
-// @todo: Темплейт карточки
+
 const cardTemplate = document.querySelector('#card-template').content
-
-// @todo: DOM узлы
 const cardPlaceList = document.querySelector('.places__list')
 
 // @todo: Функция создания карточки
@@ -37,3 +36,5 @@ function cardDelete(event) {
   let card = event.target.closest('.card')
   card.remove()
 }
+
+// Модальное окно
