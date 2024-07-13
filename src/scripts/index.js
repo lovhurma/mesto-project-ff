@@ -47,35 +47,83 @@ const profilEddBtn = document.querySelector('.profile__add-button')
 const profelPopupEdit = document.querySelector('.popup_type_edit')
 const popupTypeNewCard = document.querySelector('.popup_type_new-card')
 
-//оверлэй
-const modalWondow = document.querySelector('.popup')
-
 //кнопка закрытия модального окна
 const popupCloseBtn = document.querySelectorAll('.popup__close')
+
+//Получение полей описания профиля
+const profileTitle = document.querySelector('.profile__title')
+const profileDescription = document.querySelector('.profile__description')
+
+// Находим форму в DOM
+const formElement = document.forms['edit-profile']
+const formNewCardElement = document.forms['new-place']
+// Находим поля формы в DOM
+const nameInput = document.querySelector('.popup__input_type_name')
+const jobInput = document.querySelector('.popup__input_type_description')
+const cardNameInput = document.querySelector('.popup__input_type_card-name')
+const cardInpurUrl = document.querySelector('.popup__input_type_url')
 
 // Функция открытия модального окна
 const openPopup = (popup) => {
   popup.classList.add('popup_is-opened')
   document.addEventListener('keydown', handleCloseEsc)
-  document.addEventListener('click', modalWindowClose)
+  popup.addEventListener('click', modalWindowClose)
 }
 
 // Функция закрытия модального окна
 const closePopup = (popup) => {
   popup.classList.remove('popup_is-opened')
   document.removeEventListener('keydown', handleCloseEsc)
-  document.removeEventListener('click', modalWindowClose)
+  popup.removeEventListener('click', modalWindowClose)
 
 }
 
-// Обработчики открытия модалки
+// Обработчик открытия модалки редактирования профиля
 profilEeditBtn.addEventListener ('click', () => {
   openPopup(profelPopupEdit)
+
+  nameInput.value = profileTitle.textContent
+  jobInput.value = profileDescription.textContent
 })
 
+// Обработчик «отправки» формы редактирования профиля
+function handleFormSubmit(evt) {
+  evt.preventDefault(); 
+
+  const inputName = nameInput.value
+  const InputJob = jobInput.value
+
+  profileTitle.textContent = inputName
+  profileDescription.textContent = InputJob
+
+  closePopup(profelPopupEdit)
+}
+
+formElement.addEventListener('submit', handleFormSubmit); 
+
+// Обработчик открытия модалки добавления карточки
 profilEddBtn.addEventListener ('click', () => {
   openPopup(popupTypeNewCard)
 })
+
+// Обработчик «отправки» формы редактирования профиля
+
+function crateNewCard (evt) {
+  evt.preventDefault(); 
+
+  const element = {
+    name: cardNameInput.value,
+    link: cardInpurUrl.value,
+  }
+
+  const newPopupCard = createCard(element, cardDelete)
+
+  cardPlaceList.prepend(newPopupCard)
+  closePopup(popupTypeNewCard)
+  evt.target.reset()
+}
+
+formNewCardElement.addEventListener('submit', crateNewCard)
 
 // Обработчик закрытия по кнопке (крестику)
 popupCloseBtn.forEach(item => {
@@ -94,10 +142,10 @@ const handleCloseEsc = (evt) => {
 }
 
 const modalWindowClose = (evt) => {
-  if (evt.target === modalWondow) {
-    closePopup(modalWondow)
-  }
-}
+  if (evt.target === evt.currentTarget) {
+    closePopup(evt.currentTarget);
+  };
+};
 
 
 
