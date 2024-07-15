@@ -4,40 +4,7 @@ import { initialCards } from './cards.js'
 
 const cardTemplate = document.querySelector('#card-template').content
 const cardPlaceList = document.querySelector('.places__list')
-
-// @todo: Функция создания карточки
-
-function createCard(element, cardDelete) {
-const placeTemplate = cardTemplate.querySelector('.places__item').cloneNode(true)
-
-const cardImage = placeTemplate.querySelector('.card__image')
-const cardTitle = placeTemplate.querySelector('.card__title')
-const deleteCard = placeTemplate.querySelector('.card__delete-button')
-
-cardImage.src = element.link;
-cardTitle.textContent = element.name;
-cardImage.alt = `Изображение ${element.name}`
-
-deleteCard.addEventListener('click', cardDelete) 
-
-return placeTemplate
-}
-
-// @todo: Вывести карточки на страницу
-
-initialCards.forEach(function (element) {
-  const newCard = createCard(element, cardDelete) 
-  cardPlaceList.append(newCard)
-})
-
-// @todo: Функция удаления карточки
-
-function cardDelete(event) {
-  let card = event.target.closest('.card')
-  card.remove()
-}
-
-// Модальное окно
+const likeBtn = document.querySelectorAll('.card__like-button')
 
 //кнопки открытия модального окна
 const profilEeditBtn = document.querySelector('.profile__edit-button')
@@ -46,6 +13,9 @@ const profilEddBtn = document.querySelector('.profile__add-button')
 //модальные окна
 const profelPopupEdit = document.querySelector('.popup_type_edit')
 const popupTypeNewCard = document.querySelector('.popup_type_new-card')
+const popupTypeImage = document.querySelector('.popup_type_image')
+const popupImage = document.querySelector('.popup__image')
+const popupCuption = document.querySelector('.popup__caption')
 
 //кнопка закрытия модального окна
 const popupCloseBtn = document.querySelectorAll('.popup__close')
@@ -62,6 +32,57 @@ const nameInput = document.querySelector('.popup__input_type_name')
 const jobInput = document.querySelector('.popup__input_type_description')
 const cardNameInput = document.querySelector('.popup__input_type_card-name')
 const cardInpurUrl = document.querySelector('.popup__input_type_url')
+
+// @todo: Функция создания карточки
+function createCard(element, cardDelete, onLikeFnc, OpenImageClick) {
+const placeTemplate = cardTemplate.querySelector('.places__item').cloneNode(true)
+
+const cardImage = placeTemplate.querySelector('.card__image')
+const cardTitle = placeTemplate.querySelector('.card__title')
+const deleteCard = placeTemplate.querySelector('.card__delete-button')
+const cardLikeBtn = placeTemplate .querySelector('.card__like-button')
+
+cardImage.src = element.link;
+cardTitle.textContent = element.name;
+cardImage.alt = `Изображение ${element.name}`
+
+cardImage.addEventListener('click', () => {
+  OpenImageClick(element);
+});
+
+deleteCard.addEventListener('click', cardDelete) 
+cardLikeBtn.addEventListener('click', onLikeFnc)
+
+return placeTemplate
+}
+
+// @todo: Вывести карточки на страницу
+
+initialCards.forEach(function (element) {
+  const newCard = createCard(element, cardDelete, onLikeFnc, OpenImageClick) 
+  cardPlaceList.append(newCard)
+})
+
+// @todo: Функция удаления карточки
+
+function cardDelete(event) {
+  let card = event.target.closest('.card')
+  card.remove()
+}
+
+//Функия лайка
+
+function onLikeFnc(evt) {
+  evt.target.classList.toggle('card__like-button_is-active')
+}
+
+//Функция открытия попапа с картинкой
+function OpenImageClick(item) {
+  popupImage.src = item.link
+  popupImage.alt = item.name
+  popupCuption.textContent = item.name
+  openPopup(popupTypeImage)
+}
 
 // Функция открытия модального окна
 const openPopup = (popup) => {
@@ -86,7 +107,7 @@ profilEeditBtn.addEventListener ('click', () => {
   jobInput.value = profileDescription.textContent
 })
 
-// Обработчик «отправки» формы редактирования профиля
+// Функция «отправки» формы редактирования профиля
 function handleFormSubmit(evt) {
   evt.preventDefault(); 
 
@@ -106,7 +127,7 @@ profilEddBtn.addEventListener ('click', () => {
   openPopup(popupTypeNewCard)
 })
 
-// Обработчик «отправки» формы редактирования профиля
+// Функция «отправки» формы редактирования профиля
 
 function crateNewCard (evt) {
   evt.preventDefault(); 
@@ -116,7 +137,7 @@ function crateNewCard (evt) {
     link: cardInpurUrl.value,
   }
 
-  const newPopupCard = createCard(element, cardDelete)
+  const newPopupCard = createCard(element, cardDelete, onLikeFnc, OpenImageClick)
 
   cardPlaceList.prepend(newPopupCard)
   closePopup(popupTypeNewCard)
