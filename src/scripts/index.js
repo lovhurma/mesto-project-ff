@@ -87,8 +87,10 @@ function OpenImageClick(item) {
 // Функция открытия модального окна
 const openPopup = (popup) => {
   popup.classList.add('popup_is-opened')
+  popup.classList.add('popup_is-animated')
   document.addEventListener('keydown', handleCloseEsc)
   popup.addEventListener('click', modalWindowClose)
+
 }
 
 // Функция закрытия модального окна
@@ -151,7 +153,7 @@ popupCloseBtn.forEach(item => {
   item.addEventListener('click', () => {
     closePopup(profelPopupEdit);
     closePopup(popupTypeNewCard);
-    closePopup(popupImage)
+    closePopup(popupTypeImage)
   });
 });
 
