@@ -151,6 +151,7 @@ popupCloseBtn.forEach(item => {
   item.addEventListener('click', () => {
     closePopup(profelPopupEdit);
     closePopup(popupTypeNewCard);
+    closePopup(popupImage)
   });
 });
 
