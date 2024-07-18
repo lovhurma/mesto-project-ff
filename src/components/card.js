@@ -26,7 +26,7 @@ function createCard(element, cardDelete, onLikeFnc, openImageClick) {
 // @todo: Функция удаления карточки
 
 function cardDelete(event) {
-  let card = event.target.closest('.card')
+  const card = event.target.closest('.card')
   card.remove()
 }
 
