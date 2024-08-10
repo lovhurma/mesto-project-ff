@@ -1,7 +1,7 @@
 const cardTemplate = document.querySelector('#card-template').content
 
 // @todo: Функция создания карточки
-function createCard(element, cardDelete, onLikeFnc, openImageClick) {
+function createCard(element, cardDelete, onLikeFnc, openImageClick, userId) {
   const placeTemplate = cardTemplate.querySelector('.places__item').cloneNode(true)
   
   const cardImage = placeTemplate.querySelector('.card__image')

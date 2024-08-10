@@ -3,6 +3,7 @@ import { initialCards } from './cards.js'
 import { createCard, cardDelete, onLikeFnc } from '../components/card.js'
 import { openPopup, closePopup } from '../components/modal.js'
 import { enableValidation, validationConfig, clearValidation } from '../components/validation.js'
+import { getUserInfo, getInitialCards, editUserInfo } from '../components/api.js';
 
 const cardPlaceList = document.querySelector('.places__list')
 const profilEeditBtn = document.querySelector('.profile__edit-button')
@@ -15,6 +16,7 @@ const popupTypeImageCuption = document.querySelector('.popup__caption')
 const popupCloseBtn = document.querySelectorAll('.popup__close')
 const profileTitle = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
+const profileImg = document.querySelector('.profile__image')
 const formElementEditProfile = document.forms['edit-profile']
 const formNewCardElement = document.forms['new-place']
 const nameInput = document.querySelector('.popup__input_type_name')
@@ -24,21 +26,41 @@ const cardInpurUrl = document.querySelector('.popup__input_type_url')
 
 enableValidation(validationConfig)
 
-clearValidation(profelPopupEdit, validationConfig);
-
 // @todo: Вывести карточки на страницу
 
-initialCards.forEach(function (element) {
-  const newCard = createCard(element, cardDelete, onLikeFnc, openImageClick) 
-  cardPlaceList.append(newCard)
-})
+// initialCards.forEach(function (element) {
+//   const newCard = createCard(element, cardDelete, onLikeFnc, openImageClick) 
+//   cardPlaceList.append(newCard)
+// })
+
+function getInfoUserAndCards () {
+  return Promise.all([getUserInfo(), getInitialCards()])
+  .then(([userData, cardsData] ) => {
+  console.log({userData, cardsData})
+  
+  profileTitle.textContent =  userData.name;
+  profileDescription.textContent = userData.about;
+  profileImg.style.backgroundImage = `url(${userData.avatar})`;
+
+  const userID = userData._Id
+
+  cardsData.forEach((element) => {
+    const newCard = createCard(element, cardDelete, onLikeFnc, openImageClick,) 
+    cardPlaceList.append(newCard)
+  }) 
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+}
+
+getInfoUserAndCards()
 
 //Функция открытия попапа с картинкой
 function openImageClick(item) {
   popupImage.src = item.link
   popupImage.alt = item.name
   popupTypeImageCuption.textContent = item.name
-
   openPopup(popupTypeImage)
 }
 
@@ -55,16 +77,22 @@ profilEeditBtn.addEventListener ('click', () => {
 function handleFormSubmitProfile(evt) {
   evt.preventDefault(); 
 
-  const inputName = nameInput.value
-  const InputJob = jobInput.value
+  // const inputName = nameInput.value
+  // const InputJob = jobInput.value
 
-  profileTitle.textContent = inputName
-  profileDescription.textContent = InputJob
+  profileTitle.textContent = nameInput.value
+  profileDescription.textContent = jobInput.value
 
-  closePopup(profelPopupEdit)
+  editUserInfo(profileTitle.textContent, profileDescription.textContent)
+    .then(() => {
+      closePopup(profelPopupEdit)
+    })
+
+    // closePopup(profelPopupEdit)
 }
 
-formElementEditProfile.addEventListener('submit', handleFormSubmitProfile); 
+formElementEditProfile.addEventListener('submit', handleFormSubmitProfile);
+
 // Обработчик открытия модалки добавления карточки
 profilEddBtn.addEventListener ('click', () => {
   openPopup(popupTypeNewCard)
