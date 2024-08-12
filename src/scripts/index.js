@@ -3,7 +3,7 @@ import { initialCards } from './cards.js'
 import { createCard, cardDelete, onLikeFnc } from '../components/card.js'
 import { openPopup, closePopup } from '../components/modal.js'
 import { enableValidation, validationConfig, clearValidation } from '../components/validation.js'
-import { getUserInfo, getInitialCards, editUserInfo } from '../components/api.js';
+import { getUserInfo, getInitialCards, editUserInfo, addNewCard } from '../components/api.js';
 
 const cardPlaceList = document.querySelector('.places__list')
 const profilEeditBtn = document.querySelector('.profile__edit-button')
@@ -26,13 +26,8 @@ const cardInpurUrl = document.querySelector('.popup__input_type_url')
 
 enableValidation(validationConfig)
 
+let userId;
 // @todo: Вывести карточки на страницу
-
-// initialCards.forEach(function (element) {
-//   const newCard = createCard(element, cardDelete, onLikeFnc, openImageClick) 
-//   cardPlaceList.append(newCard)
-// })
-
 function getInfoUserAndCards () {
   return Promise.all([getUserInfo(), getInitialCards()])
   .then(([userData, cardsData] ) => {
@@ -42,10 +37,11 @@ function getInfoUserAndCards () {
   profileDescription.textContent = userData.about;
   profileImg.style.backgroundImage = `url(${userData.avatar})`;
 
-  const userID = userData._Id
+
+  const userId = userData._id
 
   cardsData.forEach((element) => {
-    const newCard = createCard(element, cardDelete, onLikeFnc, openImageClick,) 
+    const newCard = createCard(element, userId, cardDelete, onLikeFnc, openImageClick,) 
     cardPlaceList.append(newCard)
   }) 
   })
@@ -77,9 +73,6 @@ profilEeditBtn.addEventListener ('click', () => {
 function handleFormSubmitProfile(evt) {
   evt.preventDefault(); 
 
-  // const inputName = nameInput.value
-  // const InputJob = jobInput.value
-
   profileTitle.textContent = nameInput.value
   profileDescription.textContent = jobInput.value
 
@@ -88,7 +81,6 @@ function handleFormSubmitProfile(evt) {
       closePopup(profelPopupEdit)
     })
 
-    // closePopup(profelPopupEdit)
 }
 
 formElementEditProfile.addEventListener('submit', handleFormSubmitProfile);
@@ -108,13 +100,19 @@ function crateNewCard (evt) {
   const element = {
     name: cardNameInput.value,
     link: cardInpurUrl.value,
+    likes: [],
+    owner: {_id: userId}
   }
 
-  const newPopupCard = createCard(element, cardDelete, onLikeFnc, openImageClick)
+  addNewCard(element)
+  .then((data) => {
+    const newPopupCard = createCard(data, userId, cardDelete, onLikeFnc, openImageClick)
+    console.log(data)
 
   cardPlaceList.prepend(newPopupCard)
   closePopup(popupTypeNewCard)
   evt.target.reset()
+  })
 }
 
 formNewCardElement.addEventListener('submit', crateNewCard)

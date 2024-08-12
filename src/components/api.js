@@ -45,3 +45,44 @@ export const editUserInfo = (name, about) => {
 
   .then(handleResponse)
 }
+
+//Добавление новой карточки
+export const addNewCard = (cardDate) => {
+  return fetch(`${config.baseUrl}/cards`, {
+    method: 'POST',
+    headers: config.headers,
+    body: JSON.stringify(cardDate)
+  })
+
+  .then(handleResponse)
+}
+
+//Удаление карточки
+export const removeCard = (cardId) => {
+  return fetch (`${config.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers
+  })
+
+  .then(handleResponse)
+}
+
+//Лайк на карточку 
+export const addLike = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: 'PUT',
+    headers: config.headers
+  })
+
+  .then(handleResponse)
+}
+
+//Лайк на карточку 
+export const deleteLike = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers
+  })
+
+  .then(handleResponse)
+}
