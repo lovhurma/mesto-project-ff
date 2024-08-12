@@ -1,5 +1,5 @@
 const cardTemplate = document.querySelector('#card-template').content
-import { removeCard } from './api.js'
+import { removeCard, addLike, deleteLike } from './api.js'
 import { openPopup, closePopup } from './modal.js'
 
 // @todo: Функция создания карточки
@@ -10,7 +10,7 @@ function createCard(element, userId, cardDelete, onLikeFnc, openImageClick) {
   const cardTitle = placeTemplate.querySelector('.card__title')
   const deleteCard = placeTemplate.querySelector('.card__delete-button')
   const cardLikeBtn = placeTemplate .querySelector('.card__like-button')
-  const likeCardContainer = document.querySelector('.card__like-button-count')
+  const likeCardContainer = placeTemplate.querySelector('.card__like-button-count')
 
   console.log(element)
 
@@ -57,8 +57,25 @@ function cardDelete(element, cardId) {
 
 //Функия лайка
 
-function onLikeFnc(evt) {
-  evt.target.classList.toggle('card__like-button_is-active')
+function onLikeFnc(evt, cardId, likeCountainer) {
+
+  // evt.target.classList.toggle('card__like-button_is-active')
+
+  const likeButton = evt.target;
+  if (!likeButton.classlist.contains('card__like-button_is-active')) {
+    addLike(cardId)
+    .then((res) => {
+      likeButton.classlist.add('card__like-button_is-active')
+      likeCountainer.textContent = res.likes.length
+    })
+  } else {
+    deleteLike(cardId)
+    .then((res) => {
+      likeButton.classlist.remove('card__like-button_is-active')
+      likeCountainer.textContent = res.likes.length
+    })
+  }
+
 }
 
 export {createCard, cardDelete, onLikeFnc}
