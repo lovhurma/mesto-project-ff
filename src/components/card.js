@@ -13,7 +13,6 @@ function createCard(element, userId, cardDelete, onLikeFnc, openImageClick) {
   const likeCardContainer = placeTemplate.querySelector('.card__like-button-count')
 
   // console.log(element)
-
   const cardId = element._id;
   
   cardImage.src = element.link;
@@ -24,6 +23,10 @@ function createCard(element, userId, cardDelete, onLikeFnc, openImageClick) {
   cardImage.addEventListener('click', () => {
     openImageClick(element);
   });
+
+  if (element.likes.some((like) => like._id == userId)) {
+    cardLikeBtn.classList.add('card__like-button_is-active');
+  }
 
   if (userId != element.owner._id) {
     deleteCard.remove();
@@ -57,10 +60,7 @@ function cardDelete(element, cardId) {
 }
 
 //Функия лайка
-
 function onLikeFnc(evt, cardId, likeCountainer) {
-
-  // evt.target.classList.toggle('card__like-button_is-active')
 
   const likeButton = evt.target;
   if (!likeButton.classList.contains('card__like-button_is-active')) {
