@@ -3,7 +3,7 @@ import { initialCards } from './cards.js'
 import { createCard, cardDelete, onLikeFnc } from '../components/card.js'
 import { openPopup, closePopup } from '../components/modal.js'
 import { enableValidation, validationConfig, clearValidation } from '../components/validation.js'
-import { getUserInfo, getInitialCards, editUserInfo, addNewCard } from '../components/api.js';
+import { getUserInfo, getInitialCards, editUserInfo, addNewCard, addNewAvatar } from '../components/api.js';
 
 const cardPlaceList = document.querySelector('.places__list')
 const profilEeditBtn = document.querySelector('.profile__edit-button')
@@ -17,12 +17,21 @@ const popupCloseBtn = document.querySelectorAll('.popup__close')
 const profileTitle = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
 const profileImg = document.querySelector('.profile__image')
-const formElementEditProfile = document.forms['edit-profile']
 const formNewCardElement = document.forms['new-place']
+const newCardSaveBtn = formNewCardElement.querySelector('.popup__button')
+const formElementEditProfile = document.forms['edit-profile']
+const editProfileSaveBtn = formElementEditProfile.querySelector('.popup__button')
 const nameInput = document.querySelector('.popup__input_type_name')
 const jobInput = document.querySelector('.popup__input_type_description')
 const cardNameInput = document.querySelector('.popup__input_type_card-name')
 const cardInpurUrl = document.querySelector('.popup__input_type_url')
+//Аватар
+const popupChangeAvatar = document.querySelector('.popup_type_change-avatar')
+const avatarOpenBtn = document.querySelector('.profile__image')
+const avatarForm = popupChangeAvatar.querySelector('.popup__form')
+const inputAvatarForm = avatarForm.querySelector('.popup__input_type_url')
+const avatarSaveButton = avatarForm.querySelector('.popup__button')
+
 
 enableValidation(validationConfig)
 
@@ -60,6 +69,32 @@ function openImageClick(item) {
   openPopup(popupTypeImage)
 }
 
+//Открытие попапа смены аватара
+avatarOpenBtn.addEventListener('click', () => {
+  openPopup(popupChangeAvatar)
+  inputAvatarForm.value = ''
+  clearValidation(popupChangeAvatar, validationConfig)
+})
+
+// Функция смены аватара
+avatarForm.addEventListener('submit', () => {
+  changeBtnText(avatarSaveButton, true)
+  addNewAvatar(inputAvatarForm.value)
+  .then((res) => {
+    console.log(res)
+    avatarOpenBtn.style.backgroundImage = `url(${res.avatar})`
+    console.log(`url(${res.avatar})`)
+    closePopup(popupChangeAvatar)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+
+  .finally(() => {
+    changeBtnText(avatarSaveButton, false)
+  })
+})
+
 // Обработчик открытия модалки редактирования профиля
 profilEeditBtn.addEventListener ('click', () => {
   openPopup(profelPopupEdit)
@@ -72,7 +107,7 @@ profilEeditBtn.addEventListener ('click', () => {
 // Функция «отправки» формы редактирования профиля
 function handleFormSubmitProfile(evt) {
   evt.preventDefault(); 
-
+  changeBtnText(editProfileSaveBtn, true)
   profileTitle.textContent = nameInput.value
   profileDescription.textContent = jobInput.value
 
@@ -80,7 +115,9 @@ function handleFormSubmitProfile(evt) {
     .then(() => {
       closePopup(profelPopupEdit)
     })
-
+    .finally(() => {
+      changeBtnText(editProfileSaveBtn, false)
+    })
 }
 
 formElementEditProfile.addEventListener('submit', handleFormSubmitProfile);
@@ -96,7 +133,7 @@ profilEddBtn.addEventListener ('click', () => {
 
 function crateNewCard (evt) {
   evt.preventDefault(); 
-
+  changeBtnText(newCardSaveBtn, true)
   const element = {
     name: cardNameInput.value,
     link: cardInpurUrl.value,
@@ -113,6 +150,10 @@ function crateNewCard (evt) {
   closePopup(popupTypeNewCard)
   evt.target.reset()
   })
+
+  .finally(() => {
+    changeBtnText(newCardSaveBtn, false)
+  })
 }
 
 formNewCardElement.addEventListener('submit', crateNewCard)
@@ -125,6 +166,14 @@ popupCloseBtn.forEach(event => {
   })
 });
 
+//Функция смены статуса кнопки
 
+function changeBtnText (buttonElement, status) {
+  if(status) {
+    buttonElement.textContent = 'Сохранение...'
+  } else {
+    buttonElement.textContent = 'Сохранить'
+  }
+}
 
 

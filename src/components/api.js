@@ -77,11 +77,24 @@ export const addLike = (cardId) => {
   .then(handleResponse)
 }
 
-//Лайк на карточку 
+//Удаление лайка 
 export const deleteLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: config.headers
+  })
+
+  .then(handleResponse)
+}
+
+//Смена аватара
+export const addNewAvatar = (imglink) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: `${imglink}`
+    })
   })
 
   .then(handleResponse)

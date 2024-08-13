@@ -12,10 +12,9 @@ function createCard(element, userId, cardDelete, onLikeFnc, openImageClick) {
   const cardLikeBtn = placeTemplate .querySelector('.card__like-button')
   const likeCardContainer = placeTemplate.querySelector('.card__like-button-count')
 
-  console.log(element)
+  // console.log(element)
 
   const cardId = element._id;
-  console.log(cardId)
   
   cardImage.src = element.link;
   cardTitle.textContent = element.name;
@@ -34,7 +33,9 @@ function createCard(element, userId, cardDelete, onLikeFnc, openImageClick) {
     });
   }
 
-  cardLikeBtn.addEventListener('click', onLikeFnc)
+  cardLikeBtn.addEventListener('click', (evt) => {
+    onLikeFnc(evt, cardId, likeCardContainer)
+  })
 
   return placeTemplate
   }
@@ -62,16 +63,18 @@ function onLikeFnc(evt, cardId, likeCountainer) {
   // evt.target.classList.toggle('card__like-button_is-active')
 
   const likeButton = evt.target;
-  if (!likeButton.classlist.contains('card__like-button_is-active')) {
+  if (!likeButton.classList.contains('card__like-button_is-active')) {
+    console.log(cardId)
     addLike(cardId)
     .then((res) => {
-      likeButton.classlist.add('card__like-button_is-active')
+      console.log(res)
+      likeButton.classList.add('card__like-button_is-active')
       likeCountainer.textContent = res.likes.length
     })
   } else {
     deleteLike(cardId)
     .then((res) => {
-      likeButton.classlist.remove('card__like-button_is-active')
+      likeButton.classList.remove('card__like-button_is-active')
       likeCountainer.textContent = res.likes.length
     })
   }
