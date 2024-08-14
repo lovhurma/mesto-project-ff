@@ -1,3 +1,5 @@
+import { validationConfig } from '../scripts/index.js'
+
 const showInputError = (formElement, inputElement, errorMessage, validationConfig) => {
   const nameInputError = formElement.querySelector(`.${inputElement.id}-error`)
   inputElement.classList.add(validationConfig.inputErrorClass)
@@ -31,12 +33,20 @@ const showInputError = (formElement, inputElement, errorMessage, validationConfi
       return !inputElement.validity.valid
     })
   }
+
+  //Функция отключения кнопки(повторяющаяся)
+
+  const disableSubmitButton = (button, config) => {
+    button.disabled = config;
+    button.classList.add(validationConfig.inactiveButtonClass)
+  }
+
+  //
   
   const toggleButtonState = (inputList, buttonElement, validationConfig) => {
   
     if (hasInvalidInput(inputList)) {
-      buttonElement.disabled = true;
-      buttonElement.classList.add(validationConfig.inactiveButtonClass)
+      disableSubmitButton(buttonElement, true)
     } else {
       buttonElement.disabled = false;
       buttonElement.classList.remove(validationConfig.inactiveButtonClass)    
@@ -70,15 +80,7 @@ const showInputError = (formElement, inputElement, errorMessage, validationConfi
       setEventListeners(formElement, validationConfig)
     })
   }
-  
-  export const validationConfig = {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_disabled',
-    inputErrorClass: 'popup__input-invalid',
-    errorClass: 'popup__input-error_active'
-  }; 
+
   
   export const clearValidation = (formElement, validationConfig) => {
     const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector))
@@ -86,7 +88,6 @@ const showInputError = (formElement, inputElement, errorMessage, validationConfi
     inputList.forEach((inputElement) => {
       hideInputError(formElement, inputElement, validationConfig)
     })
-    
-    buttonElement.disabled = true
+    disableSubmitButton(buttonElement, true)
     buttonElement.classList.add(validationConfig.inactiveButtonClass)
   }

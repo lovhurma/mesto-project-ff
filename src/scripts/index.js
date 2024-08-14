@@ -2,7 +2,7 @@ import '../pages/index.css';
 import { initialCards } from './cards.js'
 import { createCard, cardDelete, onLikeFnc } from '../components/card.js'
 import { openPopup, closePopup } from '../components/modal.js'
-import { enableValidation, validationConfig, clearValidation } from '../components/validation.js'
+import { enableValidation, clearValidation } from '../components/validation.js'
 import { getUserInfo, getInitialCards, editUserInfo, addNewCard, addNewAvatar } from '../components/api.js';
 
 const cardPlaceList = document.querySelector('.places__list')
@@ -32,8 +32,17 @@ const avatarForm = popupChangeAvatar.querySelector('.popup__form')
 const inputAvatarForm = avatarForm.querySelector('.popup__input_type_url')
 const avatarSaveButton = avatarForm.querySelector('.popup__button')
 
+export const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input-invalid',
+  errorClass: 'popup__input-error_active'
+}; 
 
 enableValidation(validationConfig)
+
 
 let userId;
 // @todo: Вывести карточки на страницу
@@ -47,7 +56,8 @@ function getInfoUserAndCards () {
   profileImg.style.backgroundImage = `url(${userData.avatar})`;
 
 
-  const userId = userData._id
+  // const userId = userData._id
+  userId = userData._id
 
   cardsData.forEach((element) => {
     const newCard = createCard(element, userId, cardDelete, onLikeFnc, openImageClick,) 
@@ -107,14 +117,19 @@ profilEeditBtn.addEventListener ('click', () => {
 // Функция «отправки» формы редактирования профиля
 function handleFormSubmitProfile(evt) {
   evt.preventDefault(); 
-  changeBtnText(editProfileSaveBtn, true)
-  profileTitle.textContent = nameInput.value
-  profileDescription.textContent = jobInput.value
 
-  editUserInfo(profileTitle.textContent, profileDescription.textContent)
-    .then(() => {
+  changeBtnText(editProfileSaveBtn, true)
+  editUserInfo(nameInput.value, jobInput.value)
+    .then((data) => {
+      profileTitle.textContent = data.name
+      profileDescription.textContent = data.about
       closePopup(profelPopupEdit)
     })
+
+    .catch((err) => {
+      console.log(err)
+    })
+
     .finally(() => {
       changeBtnText(editProfileSaveBtn, false)
     })
@@ -137,8 +152,6 @@ function crateNewCard (evt) {
   const element = {
     name: cardNameInput.value,
     link: cardInpurUrl.value,
-    likes: [],
-    owner: {_id: userId}
   }
 
   addNewCard(element)
@@ -149,6 +162,10 @@ function crateNewCard (evt) {
   cardPlaceList.prepend(newPopupCard)
   closePopup(popupTypeNewCard)
   evt.target.reset()
+  })
+
+  .catch((err) => {
+    console.log(err)
   })
 
   .finally(() => {
@@ -169,11 +186,8 @@ popupCloseBtn.forEach(event => {
 //Функция смены статуса кнопки
 
 function changeBtnText (buttonElement, status) {
-  if(status) {
-    buttonElement.textContent = 'Сохранение...'
-  } else {
-    buttonElement.textContent = 'Сохранить'
-  }
+  
+  buttonElement.textContent = status ? 'Сохранение...' : 'Сохранить'
 }
 
 

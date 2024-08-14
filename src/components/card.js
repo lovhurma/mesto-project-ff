@@ -51,11 +51,18 @@ function cardDelete(element, cardId) {
   openPopup(removeCardPopup);
   const removeButton = removeCardPopup.querySelector('.popup__button');
 
-  removeButton.addEventListener('click', () => {
+  removeButton.onclick = () => {
     removeCard(cardId)
-    element.remove()
-    closePopup(removeCardPopup)
-  })
+
+    .then(() => {
+      element.remove()
+      closePopup(removeCardPopup)      
+    })
+
+    .catch((err) => {
+      console.log(err)
+    })
+  }
 
 }
 
@@ -63,21 +70,13 @@ function cardDelete(element, cardId) {
 function onLikeFnc(evt, cardId, likeCountainer) {
 
   const likeButton = evt.target;
-  if (!likeButton.classList.contains('card__like-button_is-active')) {
-    console.log(cardId)
-    addLike(cardId)
-    .then((res) => {
-      console.log(res)
-      likeButton.classList.add('card__like-button_is-active')
-      likeCountainer.textContent = res.likes.length
-    })
-  } else {
-    deleteLike(cardId)
-    .then((res) => {
-      likeButton.classList.remove('card__like-button_is-active')
-      likeCountainer.textContent = res.likes.length
-    })
-  }
+  const likeMethod = likeButton.classList.contains('card__like-button_is-active') ? deleteLike : addLike;
+likeMethod(cardId) 
+        .then((res) => {
+          likeButton.classList.add('card__like-button_is-active') 
+          likeCountainer.textContent = res.likes.length 
+        })
+.catch(err => console.log(err));
 
 }
 

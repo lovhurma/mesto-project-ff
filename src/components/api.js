@@ -93,7 +93,7 @@ export const addNewAvatar = (imglink) => {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
-      avatar: `${imglink}`
+      avatar: imglink
     })
   })
 
